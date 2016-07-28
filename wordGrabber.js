@@ -92,7 +92,7 @@ function getRangeFF(e) {
 }
 
 function getWordFromRange(range, e) {
-  const text = e && e.target && e.target.innerText;
+  const text = e && e.target && (e.target.innerText || e.target.textContent) || '';
   const wordClickPoint = range && range.startOffset || range && range.offset; //ff
   const separators = /([\s&^:;,!?(){}])+/;
 
@@ -127,11 +127,16 @@ function recursionWordGet(target, option) {
   // const targetNodeText = target.innerText;
 
   //поменяем текст в скопированной ноде, чтобы потом найти его парсингом
-  copyNode.querySelector(`[data-target="${uniqString}"]`).innerText = uniqString;
+  const dataTargetNode = copyNode.querySelector(`[data-target="${uniqString}"]`);
+  if (dataTargetNode.hasOwnProperty('innerText')) {
+    dataTargetNode.innerText = uniqString;
+  } else {
+    dataTargetNode.textContent = uniqString;
+  }
   const tagName = copyNode.tagName;
 
   //возьмем весь текст
-  const text = copyNode.innerText;
+  const text = copyNode.innerText || copyNode.textContent;
   const textArr = text.split(uniqString);
   const textLeftPartArr = textArr[0].split(separators);
   const textRightPartArr = textArr[1].split(separators);
